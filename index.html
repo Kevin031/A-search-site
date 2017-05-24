@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html charset=utf-8">
+		<title>一个搜索网站</title>
+		<script src="Javascript/jquery.min.js"></script>
+		<link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css">
+		<script src="bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+		<style type="text/css">
+			
+			body {
+				padding: 0;
+				margin: 0;
+				background-color: #333;
+			}
+
+			div.searchBar {
+				position: absolute;
+				left: 30%;
+				top: 300px;
+			}
+
+			div.background-img {
+				width: 98%;
+				height: 900px;
+				background:url(images/BB1883_ZH-CN14845255336_1920x1080.jpg) no-repeat center;
+				margin: 20px auto;
+			}
+
+			button.searchButton {
+				width: 40px;
+				height: 40px;
+				background-color: #007daa;
+				border: none;
+				color: #fff;
+				margin-left: -4px;
+			}
+
+			span.logo {
+				float: left;
+				width: 107px;
+				height: 53px;
+				background: url(images/logo.png);
+				margin-right: 18px;
+			}
+
+			form.searchForm {
+				display: inline-block;
+				margin-top: 10px;
+			}
+
+			input.searchText {
+				height: 40px;
+				width: 500px;
+				font-size: 18px;
+				padding-left: 5px;
+				border: none;
+			}
+
+			div.searchSuggest {
+				background-color: #fff;
+				width: 500px;
+				padding:0;
+				margin: 0;
+				border: 1px solid #999;
+				display: none;
+				position:absolute;
+			}
+
+			div.searchSuggest li {
+				list-style: none;
+				padding-left: 10px;
+				line-height: 25px;
+				cursor: pointer;
+			}
+
+			div.searchSuggest li:hover {
+				text-decoration: underline;
+				background-color: #e5e5e5;
+			}
+
+			div.searchSuggest ul {
+				margin: 5px 0;
+				padding: 0;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div class="background-img">
+			<div class="searchBar">
+				<span class="logo"></span>
+				<form class="searchForm" action="https://cn.bing.com/search" target="_blank">
+					<input type="text" class="searchText" id="searchInput" name="q" method="get" />
+					<button type="submit" class="searchButton glyphicon glyphicon-search"></button>
+				</form>
+			</div>
+		</div>
+		<div class="searchSuggest" id="searchSuggest">
+			<ul id="suggestResults">
+				<li>123</li>
+			</ul>
+		</div>
+		<script type="text/javascript">
+
+			$(document).ready(function(){
+				$("#searchInput").bind("keyup",function(){
+					var input = $(this);
+					var inputText = input.val();
+					var callback = function(data){
+						var d = data.AS.Results[0].Suggests;
+						var html = "";
+						for(var i=0; i<d.length; i++){
+							html += "<li>" + d[i].Txt + "</li>";
+						}
+						$("#suggestResults").html(html);
+						$("#searchSuggest").show().css({
+							left: $("#searchInput").offset().left,
+							top: $("#searchInput").offset().top + $("#searchInput").height() + 1
+						});
+					};
+					$.ajax({
+						type: "get",
+						async: false,
+						url: "http://api.bing.com/qsonhs.aspx?type=cb&cb=callback&q=" + inputText,
+						dataType: "jsonp",
+						jsonp: "callback", //默认callback 
+						jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+						success: function(data){
+							callback(data);
+						},
+						error: function(data){
+							console.log(data);
+						}
+					});//封装的用jsonp实现跨域的方法
+				});
+				$(document).bind("click",function(){
+					$("#searchSuggest").hide();
+				});
+				$("#searchSuggest").delegate("li","click",function(){
+					var keyword = $(this).text();
+					location.href="http://cn.bing.com/search?q=" + keyword;
+				});
+			});
+
+		</script>
+	</body>
+</html>
