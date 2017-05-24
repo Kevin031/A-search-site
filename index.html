@@ -122,7 +122,7 @@
 					$.ajax({
 						type: "get",
 						async: false,
-						url: "http://api.bing.com/qsonhs.aspx?type=cb&cb=callback&q=" + inputText,
+						url: "https://api.bing.com/qsonhs.aspx?type=cb&cb=callback&q=" + inputText,
 						dataType: "jsonp",
 						jsonp: "callback", //默认callback 
 						jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
@@ -139,7 +139,7 @@
 				});
 				$("#searchSuggest").delegate("li","click",function(){
 					var keyword = $(this).text();
-					location.href="http://cn.bing.com/search?q=" + keyword;
+					location.href="https://cn.bing.com/search?q=" + keyword;
 				});
 			});
 
